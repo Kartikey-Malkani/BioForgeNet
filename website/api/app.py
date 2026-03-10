@@ -22,6 +22,7 @@ def _cors_origins() -> list[str]:
         "http://127.0.0.1:5500",
         "https://bioforgenet.live",
         "https://www.bioforgenet.live",
+        "https://bioforgenet-web.onrender.com",
     ]
 
 app.add_middleware(
