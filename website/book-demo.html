@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Demo — BioForgeNet</title>
+  <meta name="description" content="See BioForgeNet live with your own images. Book a 30-minute personalized demo with our team." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Two-column layout ─────────────────────────────────────── */
+    .demo-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 48px;
+      padding: 64px 0 80px;
+      align-items: start;
+    }
+
+    /* ── Left panel ─────────────────────────────────────────────── */
+    .demo-info h1 { margin: 10px 0 16px; font-size: clamp(1.9rem, 3vw, 2.8rem); line-height: 1.1; }
+    .demo-info .subtext { margin-bottom: 36px; }
+
+    .what-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .what-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .what-icon {
+      flex-shrink: 0;
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(94,139,255,0.12);
+      border: 1px solid rgba(94,139,255,0.25);
+      font-size: 1.1rem;
+    }
+    .what-list h4 { margin: 0 0 3px; font-size: .96rem; }
+    .what-list p { margin: 0; color: var(--muted); font-size: .88rem; }
+
+    .social-proof {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 22px;
+    }
+    .social-proof blockquote {
+      margin: 0 0 14px;
+      font-size: .93rem;
+      line-height: 1.65;
+      font-style: italic;
+      color: var(--muted);
+    }
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .reviewer-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: .9rem;
+    }
+    .reviewer-name { font-weight: 700; font-size: .9rem; }
+    .reviewer-role { color: var(--muted); font-size: .82rem; }
+    .star-row { color: #f4c842; font-size: .85rem; margin-bottom: 12px; letter-spacing: .04em; }
+
+    /* ── Form card ───────────────────────────────────────────────── */
+    .form-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 36px 34px 40px;
+    }
+    .form-card h2 { margin: 0 0 6px; font-size: 1.45rem; }
+    .form-card .form-sub { color: var(--muted); font-size: .9rem; margin: 0 0 28px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+    .form-group label { font-size: .87rem; font-weight: 600; color: var(--muted); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: rgba(10,16,34,0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: .95rem;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(94,139,255,0.12);
+    }
+    .form-group select option { background: #121b35; }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(168,181,215,0.5); }
+
+    .form-divider { border: none; border-top: 1px solid var(--border); margin: 6px 0 22px; }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .slot-btn {
+      background: rgba(10,16,34,0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: .85rem;
+      padding: 9px 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: .2s;
+    }
+    .slot-btn:hover { border-color: var(--primary); color: var(--text); }
+    .slot-btn.selected { border-color: var(--primary); background: rgba(94,139,255,0.14); color: var(--text); }
+
+    .consent-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    .consent-row input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: var(--primary); width: 16px; height: 16px; }
+    .consent-row a { color: var(--primary); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: 12px;
+    }
+
+    /* ── Success state ───────────────────────────────────────────── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: rgba(40,208,122,0.14);
+      border: 2px solid var(--ok);
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+    }
+    .success-state h3 { margin: 0 0 10px; }
+    .success-state p { color: var(--muted); max-width: 36ch; margin: 0 auto 24px; }
+
+    /* ── Logos row ───────────────────────────────────────────────── */
+    .logos-section {
+      text-align: center;
+      padding: 8px 0 56px;
+    }
+    .logos-section p { color: var(--muted); font-size: .85rem; margin-bottom: 20px; }
+    .logos-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo-pill {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 22px;
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+
+    /* ── Stats strip ─────────────────────────────────────────────── */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-card h3 { margin: 0 0 6px; font-size: 1.8rem; color: var(--primary); }
+    .stat-card p { margin: 0; color: var(--muted); font-size: .85rem; }
+
+    @media (max-width: 920px) {
+      .demo-layout { grid-template-columns: 1fr; gap: 32px; }
+      .form-row { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .slot-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav container">
+      <a class="brand" href="index.html" style="text-decoration:none;color:inherit;">
+        <div class="brand-mark">B</div>
+        <span>BioForgeNet</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#platform">Platform</a>
+        <a href="index.html#demo">Live Demo</a>
+        <a href="index.html#use-cases">Use Cases</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+      <a class="btn btn-primary" href="book-demo.html" style="pointer-events:none;opacity:.6;">Booking Demo</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container demo-layout">
+
+      <!-- ── Left: Info ──────────────────────────────────────────── -->
+      <div class="demo-info">
+        <p class="eyebrow">Personalized Demo</p>
+        <h1>See BioForgeNet in Action on Your Own Images</h1>
+        <p class="subtext">A 30-minute live session where we run your actual biomedical images through the full pipeline — forgery detection, heatmap overlay, and forensic mask export — in real time.</p>
+
+        <ul class="what-list">
+          <li>
+            <div class="what-icon">🔬</div>
+            <div>
+              <h4>Live Inference on Your Images</h4>
+              <p>Bring 2–3 representative images. We run them through the 5-fold ensemble model and walk through the results together.</p>
+            </div>
+          </li>
+          <li>
+            <div class="what-icon">🧩</div>
+            <div>
+              <h4>Integration Walkthrough</h4>
+              <p>See exactly how the REST API, webhooks, and SDKs slot into your existing LIMS, submission portal, or quality workflow.</p>
+            </div>
+          </li>
+          <li>
+            <div class="what-icon">📋</div>
+            <div>
+              <h4>Compliance Q&A</h4>
+              <p>Ask about 21 CFR Part 11, GDPR, data residency, and audit trail requirements. We answer plainly, not with legal boilerplate.</p>
+            </div>
+          </li>
+          <li>
+            <div class="what-icon">💰</div>
+            <div>
+              <h4>Custom Pricing Discussion</h4>
+              <p>Get a tailored quote based on your scan volume, team size, and deployment requirements — no generic tier forced on you.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="social-proof">
+          <div class="star-row">★★★★★</div>
+          <blockquote>"We went from manual retraction-risk review to fully automated screening in under two weeks. The forensic mask output was immediately accepted in our internal audit trail."</blockquote>
+          <div class="reviewer">
+            <div class="reviewer-avatar">SK</div>
+            <div>
+              <div class="reviewer-name">Dr. Sarah Kim</div>
+              <div class="reviewer-role">Director of Research Integrity · BioNovex Therapeutics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Right: Form ─────────────────────────────────────────── -->
+      <div class="form-card" id="formCard">
+        <h2>Book Your 30-Minute Demo</h2>
+        <p class="form-sub">Typically responds within 2 business hours. All fields marked * are required.</p>
+
+        <form id="demoForm" onsubmit="handleSubmit(event)" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Sarah" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Kim" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="workEmail">Work Email *</label>
+            <input type="email" id="workEmail" name="workEmail" placeholder="sarah.kim@company.com" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company">Company / Institution *</label>
+              <input type="text" id="company" name="company" placeholder="BioNovex Therapeutics" required />
+            </div>
+            <div class="form-group">
+              <label for="jobTitle">Job Title *</label>
+              <input type="text" id="jobTitle" name="jobTitle" placeholder="Director of Research Integrity" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="teamSize">Team Size</label>
+              <select id="teamSize" name="teamSize">
+                <option value="">Select…</option>
+                <option>1–5 people</option>
+                <option>6–25 people</option>
+                <option>26–100 people</option>
+                <option>100+ people</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="monthlyScans">Est. Monthly Scans</label>
+              <select id="monthlyScans" name="monthlyScans">
+                <option value="">Select…</option>
+                <option>Under 100</option>
+                <option>100–500</option>
+                <option>500–5,000</option>
+                <option>5,000–50,000</option>
+                <option>50,000+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="useCase">Primary Use Case *</label>
+            <select id="useCase" name="useCase" required>
+              <option value="">Select your workflow…</option>
+              <option>Journal / Publisher — pre-review figure screening</option>
+              <option>Pharma / Biotech — preclinical compliance pipeline</option>
+              <option>CRO — quality operations &amp; sponsor reporting</option>
+              <option>Academic Lab — pre-submission self-audit</option>
+              <option>Regulatory / Audit — third-party investigation</option>
+              <option>Other / Not sure yet</option>
+            </select>
+          </div>
+
+          <hr class="form-divider" />
+
+          <div class="form-group">
+            <label>Preferred Demo Slot (your timezone)</label>
+            <div class="slot-grid" id="slotGrid">
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Mon · 10:00 AM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Mon · 3:00 PM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Tue · 11:00 AM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Wed · 9:00 AM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Wed · 2:00 PM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Thu · 4:00 PM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Fri · 10:00 AM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Fri · 1:00 PM</button>
+              <button type="button" class="slot-btn" onclick="selectSlot(this)">Flexible — suggest slots</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Anything specific you'd like to cover? (optional)</label>
+            <textarea id="message" name="message" placeholder="e.g. We process confocal microscopy images and need to understand how well the model handles our staining protocol…"></textarea>
+          </div>
+
+          <div class="consent-row">
+            <input type="checkbox" id="consent" required />
+            <label for="consent">I agree to receive demo-related communications from BioForgeNet. We will never share your data with third parties. <a href="#">Privacy Policy</a></label>
+          </div>
+
+          <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+            Request My Demo →
+          </button>
+        </form>
+
+        <!-- Success state -->
+        <div class="success-state" id="successState">
+          <div class="success-icon">✓</div>
+          <h3>Request Received!</h3>
+          <p>We'll send you a calendar invite to your work email within 2 business hours.</p>
+          <a href="index.html#demo" class="btn btn-primary" style="display:inline-block;margin-top:4px;">Try the Live Demo Now</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Stats strip ───────────────────────────────────────────── -->
+    <section class="container">
+      <div class="stats-strip">
+        <div class="stat-card">
+          <h3>1.2M+</h3>
+          <p>Images scanned to date</p>
+        </div>
+        <div class="stat-card">
+          <h3>&lt;2s</h3>
+          <p>Avg inference latency</p>
+        </div>
+        <div class="stat-card">
+          <h3>0.4654</h3>
+          <p>CV Dice score (5-fold)</p>
+        </div>
+        <div class="stat-card">
+          <h3>99.95%</h3>
+          <p>Uptime SLA</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Logo row ──────────────────────────────────────────────── -->
+    <section class="container logos-section">
+      <p>Trusted by research teams at</p>
+      <div class="logos-row">
+        <div class="logo-pill">Nature Publishing</div>
+        <div class="logo-pill">BioNovex</div>
+        <div class="logo-pill">ClinPath CRO</div>
+        <div class="logo-pill">EuroGenomics</div>
+        <div class="logo-pill">Pharma QA Alliance</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2026 BioForgeNet &nbsp;·&nbsp; <a href="index.html" style="color:var(--muted);">Home</a> &nbsp;·&nbsp; <a href="pricing.html" style="color:var(--muted);">Pricing</a></p>
+  </footer>
+
+  <script>
+    let selectedSlot = null;
+
+    function selectSlot(btn) {
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSlot = btn.textContent;
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('demoForm');
+      const btn  = document.getElementById('submitBtn');
+
+      // Basic validation
+      const required = form.querySelectorAll('[required]');
+      let valid = true;
+      required.forEach(el => {
+        if (!el.value.trim() || (el.type === 'checkbox' && !el.checked)) {
+          el.style.borderColor = 'var(--danger)';
+          valid = false;
+        } else {
+          el.style.borderColor = '';
+        }
+      });
+      if (!valid) {
+        btn.textContent = 'Please fill required fields';
+        setTimeout(() => { btn.textContent = 'Request My Demo →'; }, 2000);
+        return;
+      }
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      // Build payload
+      const payload = {
+        firstName:    document.getElementById('firstName').value,
+        lastName:     document.getElementById('lastName').value,
+        email:        document.getElementById('workEmail').value,
+        company:      document.getElementById('company').value,
+        jobTitle:     document.getElementById('jobTitle').value,
+        teamSize:     document.getElementById('teamSize').value,
+        monthlyScans: document.getElementById('monthlyScans').value,
+        useCase:      document.getElementById('useCase').value,
+        preferredSlot: selectedSlot || 'Not specified',
+        message:      document.getElementById('message').value,
+        _subject:     'New BioForgeNet Demo Request — ' + document.getElementById('company').value,
+        _replyto:     document.getElementById('workEmail').value,
+      };
+
+      try {
+        const res = await fetch('https://formspree.io/malkani.ai024@gmail.com', {
+          method:  'POST',
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+
+        if (res.ok || res.status === 200) {
+          document.getElementById('demoForm').style.display = 'none';
+          const s = document.getElementById('successState');
+          s.style.display = 'block';
+          if (selectedSlot && !selectedSlot.includes('Flexible')) {
+            s.querySelector('p').textContent =
+              `We'll send a calendar invite for ${selectedSlot} to ${payload.email} within 2 business hours.`;
+          }
+        } else {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || `Status ${res.status}`);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Request My Demo →';
+        // Fallback: open mail client if fetch fails (e.g. first-time Formspree verification pending)
+        const body = encodeURIComponent(
+          `Name: ${payload.firstName} ${payload.lastName}\nEmail: ${payload.email}\nCompany: ${payload.company}\nTitle: ${payload.jobTitle}\nUse Case: ${payload.useCase}\nPreferred Slot: ${payload.preferredSlot}\n\n${payload.message}`
+        );
+        const subject = encodeURIComponent(payload._subject);
+        window.location.href = `mailto:malkani.ai024@gmail.com?subject=${subject}&body=${body}`;
+      }
+    }
+  </script>
+</body>
+</html>

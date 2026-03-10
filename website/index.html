@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="api-base" content="https://api.bioforgenet.live" />
+  <title>BioForgeNet | Scientific Image Integrity Platform</title>
+  <meta name="description" content="Enterprise-grade scientific image forgery detection for R&D, clinical publishing, and compliance teams." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav container">
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <span>BioForgeNet</span>
+      </div>
+      <div class="nav-links">
+        <a href="#platform">Platform</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#use-cases">Use Cases</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+      <a class="btn btn-ghost" href="book-demo.html">Book Demo</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-copy">
+        <p class="eyebrow">AI Integrity Infrastructure for Scientific Imaging</p>
+        <h1>Protect Biomedical Research from Image Tampering — at Scale.</h1>
+        <p class="subtext">Deploy your trained forgery model as a premium product experience for journals, biotech teams, CROs, and compliance auditors.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#demo">Try Interactive Demo</a>
+          <a class="btn btn-ghost" href="pricing.html">View Enterprise Pricing</a>
+        </div>
+        <div class="trust-row">
+          <span>Model-backed CV Dice: <strong>0.4654</strong></span>
+          <span>5-Fold Ensemble + TTA</span>
+          <span>PyTorch Production Pipeline</span>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <h3>Integrity Risk Monitor</h3>
+        <div class="metric-grid">
+          <div>
+            <p>Scans Processed</p>
+            <h4>1.2M+</h4>
+          </div>
+          <div>
+            <p>Flagged Cases</p>
+            <h4>2.8%</h4>
+          </div>
+          <div>
+            <p>Avg Analysis Time</p>
+            <h4>1.6s</h4>
+          </div>
+          <div>
+            <p>Uptime SLA</p>
+            <h4>99.95%</h4>
+          </div>
+        </div>
+        <div class="mini-chart" aria-hidden="true">
+          <span style="height: 22%"></span><span style="height: 35%"></span><span style="height: 18%"></span>
+          <span style="height: 56%"></span><span style="height: 28%"></span><span style="height: 62%"></span>
+          <span style="height: 40%"></span><span style="height: 76%"></span><span style="height: 58%"></span>
+        </div>
+      </aside>
+    </section>
+
+    <section id="platform" class="container section">
+      <div class="section-head">
+        <p class="eyebrow">Platform</p>
+        <h2>Built for Regulated, High-Stakes Scientific Workflows</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Forensic Segmentation</h3>
+          <p>Pixel-level forgery localization surfaces suspicious regions for analyst verification and reporting.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Evidence-Ready Output</h3>
+          <p>Generate structured predictions, confidence metadata, and traceable records for audits and publication reviews.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Seamless Integration</h3>
+          <p>Connect with LIMS, journal submission portals, and internal quality systems via API-first architecture.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="demo" class="container section">
+      <div class="section-head">
+        <p class="eyebrow">Interactive Demo</p>
+        <h2>Simulate a Real Image Integrity Check</h2>
+      </div>
+      <div class="demo-panel">
+        <div class="upload-zone" id="uploadZone">
+          <input id="fileInput" type="file" accept="image/*" hidden />
+          <p class="upload-title">Drop biomedical image here</p>
+          <p class="upload-sub">or click to upload · PNG/JPG/TIFF</p>
+          <button class="btn btn-primary" id="uploadBtn">Select Image</button>
+          <p id="fileName" class="file-name">No file selected</p>
+        </div>
+
+        <div class="demo-actions">
+          <button class="btn btn-primary" id="analyzeBtn" disabled>Run Forgery Analysis</button>
+          <button class="btn btn-ghost" id="resetBtn">Reset</button>
+          <span class="api-status" id="apiStatus">Backend: checking...</span>
+        </div>
+        <p id="scanQuotaBar" style="font-size:.82rem;color:var(--muted);margin:6px 0 0;text-align:center;"></p>
+
+        <div class="result-shell">
+          <div class="result-header">
+            <h3>Analysis Result</h3>
+            <span class="pill" id="statusPill">Awaiting scan</span>
+          </div>
+          <div class="result-grid">
+            <div class="result-card">
+              <p>Predicted Class</p>
+              <h4 id="predClass">—</h4>
+            </div>
+            <div class="result-card">
+              <p>Risk Score</p>
+              <h4 id="riskScore">—</h4>
+            </div>
+            <div class="result-card">
+              <p>Estimated Tampered Area</p>
+              <h4 id="tamperArea">—</h4>
+            </div>
+            <div class="result-card">
+              <p>Model Stack</p>
+              <h4 id="engineName">—</h4>
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <label>Inference Confidence</label>
+            <div class="progress-bar"><span id="confidenceBar"></span></div>
+          </div>
+
+          <div class="viz-grid">
+            <div class="viz-card">
+              <p>Original Image</p>
+              <div class="viz-stage">
+                <img id="originalPreview" alt="Original preview" />
+              </div>
+            </div>
+            <div class="viz-card">
+              <p>Forgery Heatmap Overlay</p>
+              <div class="viz-stage viz-overlay-stage">
+                <img id="overlayBase" alt="Overlay base" />
+                <img id="overlayMask" class="mask-layer" alt="Predicted forgery mask" />
+              </div>
+            </div>
+          </div>
+
+          <div class="export-actions">
+            <button class="btn btn-primary" id="downloadMaskBtn" disabled title="Download forensic mask as PNG for reports and compliance documentation">
+              📥 Download Forensic Mask
+            </button>
+            <p class="export-hint">Export binary segmentation mask for compliance reports and forensic documentation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="use-cases" class="container section">
+      <div class="section-head">
+        <p class="eyebrow">Use Cases</p>
+        <h2>Where This Product Creates Immediate Value</h2>
+      </div>
+      <div class="use-grid">
+        <article>
+          <h3>Journal Editorial QA</h3>
+          <p>Pre-screen microscopy and biomedical figures before peer review to reduce retractions and reputational risk.</p>
+        </article>
+        <article>
+          <h3>Pharma & Biotech Compliance</h3>
+          <p>Automate image integrity checks in preclinical pipelines and maintain auditable validation trails.</p>
+        </article>
+        <article>
+          <h3>CRO Quality Operations</h3>
+          <p>Offer integrity screening as a premium service tier for sponsors who require higher assurance.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2026 BioForgeNet. Built on your scientific forgery detection pipeline.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

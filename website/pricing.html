@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — BioForgeNet</title>
+  <meta name="description" content="Transparent, usage-based pricing for scientific image integrity teams. From early-stage labs to global CROs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Page-level extras ─────────────────────────────────────────── */
+    .page-hero {
+      padding: 72px 0 20px;
+      text-align: center;
+    }
+    .page-hero h1 { margin: 10px 0 14px; }
+    .page-hero .subtext { max-width: 54ch; margin: 0 auto; }
+
+    /* ── Toggle ────────────────────────────────────────────────────── */
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 32px 0 48px;
+      font-weight: 600;
+    }
+    .toggle-track {
+      width: 52px; height: 28px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-track.annual { background: linear-gradient(135deg, var(--primary), #7a6dff); }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform .2s;
+    }
+    .toggle-track.annual .toggle-thumb { transform: translateX(24px); }
+    .toggle-label { color: var(--muted); cursor: pointer; user-select: none; }
+    .toggle-label.active { color: var(--text); }
+    .save-badge {
+      background: rgba(40,208,122,0.15);
+      border: 1px solid rgba(40,208,122,0.35);
+      color: var(--ok);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+
+    /* ── Plans grid ─────────────────────────────────────────────────── */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .plan-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px 26px 28px;
+      position: relative;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 24px 60px rgba(0,0,0,0.35); }
+    .plan-card.featured {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(94,139,255,0.4), 0 20px 48px rgba(80,118,255,0.2);
+    }
+    .featured-badge {
+      position: absolute;
+      top: -14px; left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), #7a6dff);
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .plan-name { font-size: 1rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .plan-tagline { color: var(--muted); font-size: .9rem; margin: 6px 0 22px; min-height: 2.4em; }
+
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+    .price-amount { font-size: 2.8rem; font-weight: 800; line-height: 1; }
+    .price-period { color: var(--muted); font-size: .9rem; }
+    .price-note { color: var(--muted); font-size: .82rem; min-height: 1.2em; margin-bottom: 24px; }
+
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 22px; }
+
+    .plan-features { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 11px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: .93rem; }
+    .plan-features li .icon { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: .7rem; margin-top: 1px; }
+    .icon-ok  { background: rgba(40,208,122,0.15); color: var(--ok); border: 1px solid rgba(40,208,122,0.3); }
+    .icon-no  { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+    .plan-features li.muted-feat { color: var(--muted); }
+
+    .plan-cta { width: 100%; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ── Add-ons ─────────────────────────────────────────────────────── */
+    .addons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .addon-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .addon-card h4 { margin: 0 0 6px; font-size: 1rem; }
+    .addon-card p { color: var(--muted); font-size: .88rem; margin: 0 0 12px; }
+    .addon-price { font-weight: 700; color: var(--accent); }
+
+    /* ── Compare table ───────────────────────────────────────────────── */
+    .compare-wrap { overflow-x: auto; }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    .compare-table th, .compare-table td {
+      padding: 13px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table th { color: var(--muted); font-weight: 600; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
+    .compare-table td:first-child, .compare-table th:first-child { text-align: left; color: var(--text); }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .compare-table .section-row td {
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding-top: 22px;
+      background: transparent;
+    }
+    .chk { color: var(--ok); font-size: 1rem; }
+    .dash { color: var(--border); }
+
+    /* ── FAQ ──────────────────────────────────────────────────────────── */
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .faq-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .faq-card h4 { margin: 0 0 8px; font-size: .98rem; }
+    .faq-card p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+    /* ── CTA banner ───────────────────────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(94,139,255,0.18), rgba(56,212,200,0.12));
+      border: 1px solid rgba(94,139,255,0.3);
+      border-radius: 24px;
+      padding: 52px 40px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .cta-banner h2 { margin: 10px 0 12px; }
+    .cta-banner .subtext { margin: 0 auto 28px; max-width: 52ch; }
+    .cta-banner .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 920px) {
+      .plans-grid, .addons-grid, .faq-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav container">
+      <a class="brand" href="index.html" style="text-decoration:none;color:inherit;">
+        <div class="brand-mark">B</div>
+        <span>BioForgeNet</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#platform">Platform</a>
+        <a href="index.html#demo">Live Demo</a>
+        <a href="index.html#use-cases">Use Cases</a>
+        <a href="pricing.html" style="color:var(--text);">Pricing</a>
+      </div>
+      <a class="btn btn-primary" href="book-demo.html">Book Demo</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ── Hero ─────────────────────────────────────────────────── -->
+    <section class="page-hero container">
+      <p class="eyebrow">Transparent Pricing</p>
+      <h1>Simple Plans for Every Scale of Research</h1>
+      <p class="subtext">From single-lab validation to enterprise-wide compliance pipelines. Cancel anytime, no lock-in.</p>
+    </section>
+
+    <!-- ── Billing toggle ───────────────────────────────────────── -->
+    <div class="billing-toggle container">
+      <span class="toggle-label active" id="monthlyLabel">Monthly</span>
+      <div class="toggle-track" id="billingToggle" onclick="switchBilling()">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label" id="annualLabel">Annual</span>
+      <span class="save-badge">Save 20%</span>
+    </div>
+
+    <!-- ── Plans ────────────────────────────────────────────────── -->
+    <section class="container section" style="padding-top:0;">
+      <div class="plans-grid">
+
+        <!-- Starter -->
+        <div class="plan-card">
+          <p class="plan-name">Starter</p>
+          <p class="plan-tagline">For research labs and individual scientists validating figures before submission.</p>
+          <div class="plan-price">
+            <span class="price-amount" data-monthly="299" data-annual="239">$299</span>
+            <span class="price-period">/month</span>
+          </div>
+          <p class="price-note" id="starterNote">Billed monthly &nbsp;·&nbsp; Up to 500 scans/mo</p>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="icon icon-ok">✓</span>500 image scans / month</li>
+            <li><span class="icon icon-ok">✓</span>Forgery probability + heatmap overlay</li>
+            <li><span class="icon icon-ok">✓</span>Downloadable forensic mask PNG</li>
+            <li><span class="icon icon-ok">✓</span>REST API access</li>
+            <li><span class="icon icon-ok">✓</span>Email support (48h SLA)</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>Batch processing</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>LIMS integration</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>Audit trail &amp; logs</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>SSO / SAML</li>
+          </ul>
+          <a href="book-demo.html" class="btn btn-outline plan-cta" style="display:block;text-align:center;padding:13px;">Start Free Trial</a>
+        </div>
+
+        <!-- Professional (featured) -->
+        <div class="plan-card featured">
+          <div class="featured-badge">Most Popular</div>
+          <p class="plan-name" style="color:var(--primary);">Professional</p>
+          <p class="plan-tagline">For journals, biotech quality teams, and multi-project CROs.</p>
+          <div class="plan-price">
+            <span class="price-amount" data-monthly="899" data-annual="719">$899</span>
+            <span class="price-period">/month</span>
+          </div>
+          <p class="price-note" id="proNote">Billed monthly &nbsp;·&nbsp; Up to 5,000 scans/mo</p>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="icon icon-ok">✓</span>5,000 image scans / month</li>
+            <li><span class="icon icon-ok">✓</span>Forgery probability + heatmap overlay</li>
+            <li><span class="icon icon-ok">✓</span>Downloadable forensic mask PNG</li>
+            <li><span class="icon icon-ok">✓</span>REST API + Webhook notifications</li>
+            <li><span class="icon icon-ok">✓</span>Batch upload (up to 200 images)</li>
+            <li><span class="icon icon-ok">✓</span>Full audit trail with timestamps</li>
+            <li><span class="icon icon-ok">✓</span>Priority email support (8h SLA)</li>
+            <li><span class="icon icon-ok">✓</span>Usage analytics dashboard</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>LIMS / EDMS integration</li>
+            <li class="muted-feat"><span class="icon icon-no">–</span>SSO / SAML</li>
+          </ul>
+          <a href="book-demo.html" class="btn btn-primary plan-cta" style="display:block;text-align:center;padding:13px;">Start Free Trial</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="plan-card">
+          <p class="plan-name">Enterprise</p>
+          <p class="plan-tagline">For pharma, top-tier journals, and regulated CROs requiring full compliance.</p>
+          <div class="plan-price">
+            <span class="price-amount" style="font-size:2rem;line-height:1.2;">Custom</span>
+          </div>
+          <p class="price-note">Volume pricing &nbsp;·&nbsp; Unlimited scans</p>
+          <hr class="plan-divider" />
+          <ul class="plan-features">
+            <li><span class="icon icon-ok">✓</span>Unlimited image scans</li>
+            <li><span class="icon icon-ok">✓</span>Forgery probability + heatmap overlay</li>
+            <li><span class="icon icon-ok">✓</span>Downloadable forensic mask PNG</li>
+            <li><span class="icon icon-ok">✓</span>REST API + Webhooks + SDK</li>
+            <li><span class="icon icon-ok">✓</span>Bulk batch processing</li>
+            <li><span class="icon icon-ok">✓</span>Full immutable audit trail (21 CFR Part 11)</li>
+            <li><span class="icon icon-ok">✓</span>LIMS / EDMS / submission portal integration</li>
+            <li><span class="icon icon-ok">✓</span>SSO / SAML / LDAP</li>
+            <li><span class="icon icon-ok">✓</span>Dedicated CSM + 2h SLA</li>
+            <li><span class="icon icon-ok">✓</span>On-prem / private cloud deployment</li>
+          </ul>
+          <a href="book-demo.html" class="btn btn-outline plan-cta" style="display:block;text-align:center;padding:13px;">Contact Sales</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Add-ons ───────────────────────────────────────────────── -->
+    <section class="container section">
+      <div class="section-head">
+        <p class="eyebrow">Add-Ons</p>
+        <h2>Extend Your Plan</h2>
+      </div>
+      <div class="addons-grid">
+        <div class="addon-card">
+          <h4>Extra Scan Packs</h4>
+          <p>Top up when you exceed your monthly quota. Never get blocked mid-submission cycle.</p>
+          <span class="addon-price">$0.18 / scan</span>
+        </div>
+        <div class="addon-card">
+          <h4>Compliance Report Module</h4>
+          <p>Auto-generate timestamped PDF reports with scan metadata, chain-of-custody, and raw masks attached.</p>
+          <span class="addon-price">+$149 / month</span>
+        </div>
+        <div class="addon-card">
+          <h4>Priority Inference SLA</h4>
+          <p>Guaranteed &lt;500ms inference latency per scan via dedicated GPU node. Ideal for editorial decision workflows.</p>
+          <span class="addon-price">+$299 / month</span>
+        </div>
+        <div class="addon-card">
+          <h4>Model Fine-Tuning</h4>
+          <p>We fine-tune BioForgeNet on your internal image corpus (microscopy modality, staining protocol, instrument type).</p>
+          <span class="addon-price">Contact us</span>
+        </div>
+        <div class="addon-card">
+          <h4>White-Label Deployment</h4>
+          <p>Embed BioForgeNet under your own brand in your submission portal or quality dashboard.</p>
+          <span class="addon-price">Contact us</span>
+        </div>
+        <div class="addon-card">
+          <h4>Forensic Expert Review</h4>
+          <p>A human forensic analyst reviews flagged images and delivers a written opinion for high-stakes audit cases.</p>
+          <span class="addon-price">$350 / case</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Feature comparison ────────────────────────────────────── -->
+    <section class="container section">
+      <div class="section-head">
+        <p class="eyebrow">Full Comparison</p>
+        <h2>What's Included at Each Tier</h2>
+      </div>
+      <div class="compare-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:38%;">Feature</th>
+              <th>Starter</th>
+              <th>Professional</th>
+              <th>Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="section-row"><td colspan="4">Core Detection</td></tr>
+            <tr><td>U-Net + EfficientNet-B3 model</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>5-fold ensemble + TTA</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Pixel-level heatmap overlay</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Forensic mask PNG download</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>CV Dice 0.4654 baseline model</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+
+            <tr class="section-row"><td colspan="4">API &amp; Integration</td></tr>
+            <tr><td>REST API</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Webhooks</td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>SDK (Python / Node)</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>LIMS / EDMS connector</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Journal submission portal plugin</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+
+            <tr class="section-row"><td colspan="4">Compliance &amp; Audit</td></tr>
+            <tr><td>Audit trail</td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Immutable chain-of-custody log</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>21 CFR Part 11 ready</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>ISO 27001 data handling</td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>GDPR / HIPAA compliant</td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>PDF compliance reports</td><td><span class="dash">—</span></td><td>Add-on</td><td><span class="chk">✓</span></td></tr>
+
+            <tr class="section-row"><td colspan="4">Deployment</td></tr>
+            <tr><td>SaaS (multi-tenant cloud)</td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Private cloud (VPC)</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>On-premise Docker deployment</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+
+            <tr class="section-row"><td colspan="4">Support</td></tr>
+            <tr><td>Email support</td><td>48h SLA</td><td>8h SLA</td><td>2h SLA</td></tr>
+            <tr><td>Dedicated Customer Success Manager</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+            <tr><td>Onboarding &amp; training sessions</td><td><span class="dash">—</span></td><td>1 session</td><td>Unlimited</td></tr>
+            <tr><td>Custom model fine-tuning</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chk">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── FAQ ──────────────────────────────────────────────────── -->
+    <section class="container section">
+      <div class="section-head">
+        <p class="eyebrow">FAQ</p>
+        <h2>Common Questions</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h4>What counts as an "image scan"?</h4>
+          <p>Each unique image sent to the <code>/analyze</code> or <code>/analyze-mask</code> endpoint counts as one scan. Re-analysis of the same image (same bytes) within 24 hours is cached and does not count against your quota.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Can I trial Enterprise features before committing?</h4>
+          <p>Yes. All plans come with a 14-day free trial that includes 200 free scans. Enterprise trials extend to 30 days with full feature access. No credit card required to start.</p>
+        </div>
+        <div class="faq-card">
+          <h4>What image formats are supported?</h4>
+          <p>PNG, JPEG, TIFF, BMP, and WebP up to 50 MB per file. Microscopy formats (OME-TIFF, CZI via conversion) are available on Professional and Enterprise plans.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Is the underlying model auditable?</h4>
+          <p>Enterprise customers receive full model documentation: architecture specs, training dataset provenance, cross-validation curves, and inference pipeline details — suitable for regulatory submission packages.</p>
+        </div>
+        <div class="faq-card">
+          <h4>How accurate is the forgery detector?</h4>
+          <p>The production model achieves a cross-validated Dice score of <strong>0.4654</strong> on our held-out benchmark (5-fold, test-time augmentation, ensemble). This measures pixel-level forgery localization accuracy, not just binary classification.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Can BioForgeNet be integrated into our existing submission portal?</h4>
+          <p>Yes. Enterprise plans include a connector SDK and webhook infrastructure. We have pre-built integrations for ScholarOne, Editorial Manager, and ELN systems. Custom connectors are scoped during onboarding.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Where is my data stored?</h4>
+          <p>Uploaded images are processed in-memory and not persisted on our infrastructure by default. Professional and Enterprise customers can configure encrypted cloud storage for audit trail retention with configurable retention windows.</p>
+        </div>
+        <div class="faq-card">
+          <h4>What happens if I exceed my scan quota?</h4>
+          <p>We notify you at 80% and 95% of your monthly quota. At 100%, you can either top up with an Extra Scan Pack or wait for the next billing cycle. We never silently reject images or charge surprise overages.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA banner ────────────────────────────────────────────── -->
+    <section class="container section">
+      <div class="cta-banner">
+        <p class="eyebrow">Get Started</p>
+        <h2>Start Your 14-Day Free Trial</h2>
+        <p class="subtext">No credit card required. Full API access. Cancel anytime. Your first 200 scans are on us.</p>
+        <div class="btn-row">
+          <a href="book-demo.html" class="btn btn-primary">Book a Demo</a>
+          <a href="index.html#demo" class="btn btn-ghost">Try the Live Demo First</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2026 BioForgeNet &nbsp;·&nbsp; <a href="index.html" style="color:var(--muted);">Home</a> &nbsp;·&nbsp; <a href="book-demo.html" style="color:var(--muted);">Book Demo</a></p>
+  </footer>
+
+  <script>
+    let isAnnual = false;
+    function switchBilling() {
+      isAnnual = !isAnnual;
+      const track = document.getElementById('billingToggle');
+      const mLabel = document.getElementById('monthlyLabel');
+      const aLabel = document.getElementById('annualLabel');
+      track.classList.toggle('annual', isAnnual);
+      mLabel.classList.toggle('active', !isAnnual);
+      aLabel.classList.toggle('active', isAnnual);
+
+      document.querySelectorAll('.price-amount[data-monthly]').forEach(el => {
+        const val = isAnnual ? el.dataset.annual : el.dataset.monthly;
+        el.textContent = '$' + val;
+      });
+
+      const starterNote = document.getElementById('starterNote');
+      const proNote = document.getElementById('proNote');
+      if (isAnnual) {
+        starterNote.textContent = 'Billed annually · Up to 500 scans/mo';
+        proNote.textContent = 'Billed annually · Up to 5,000 scans/mo';
+      } else {
+        starterNote.textContent = 'Billed monthly · Up to 500 scans/mo';
+        proNote.textContent = 'Billed monthly · Up to 5,000 scans/mo';
+      }
+    }
+  </script>
+</body>
+</html>

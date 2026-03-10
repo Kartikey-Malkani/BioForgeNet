@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: bioforgenet-api
+    runtime: python
+    rootDir: website
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: PYTHONUTF8
+        value: "1"
+      - key: PYTHONIOENCODING
+        value: utf-8
+      - key: CORS_ORIGINS
+        value: https://bioforgenet.live,https://www.bioforgenet.live
+      # Optional: set this in Render dashboard when using real checkpoints
+      # - key: VERISIGHT_CHECKPOINT_DIR
+      #   value: /opt/render/project/src/outputs/checkpoints
+
+  - type: static
+    name: bioforgenet-web
+    rootDir: website
+    buildCommand: ""
+    staticPublishPath: .
