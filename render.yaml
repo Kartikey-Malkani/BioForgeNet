@@ -18,8 +18,9 @@ services:
       # - key: VERISIGHT_CHECKPOINT_DIR
       #   value: /opt/render/project/src/outputs/checkpoints
 
-  - type: static_site
+  - type: web
     name: bioforgenet-web
+    runtime: static
     rootDir: website
     buildCommand: ""
     staticPublishPath: .
