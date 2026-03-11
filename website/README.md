@@ -78,6 +78,48 @@ The backend auto-detects and uses real trained checkpoints when available.
    uvicorn api.app:app --reload --port 8000
    ```
 
+5. **Optional:** limit loaded folds (useful for low-memory hosting)
+   ```bash
+   set VERISIGHT_MAX_FOLDS=1
+   uvicorn api.app:app --reload --port 8000
+   ```
+
+---
+
+## 🤗 Hugging Face Spaces (Free-Friendly Real Checkpoint Mode)
+
+Use this when Render free RAM is not enough for local checkpoint storage.
+
+### 1) Create repos on Hugging Face
+- Create one **Docker Space** (for API), for example: `yourname/bioforgenet-api`
+- Create one **Model or Dataset repo** (for checkpoints), for example: `yourname/bioforgenet-checkpoints`
+- Upload `best_fold*.pth` files to that checkpoint repo
+
+### 2) Space source folder
+- Use `website/` as the Space project root (it already contains `Dockerfile` and `requirements.txt`)
+
+### 3) Space variables/secrets
+In Space **Settings → Variables and secrets**, set:
+- `CORS_ORIGINS=https://bioforgenet.live,https://www.bioforgenet.live`
+- `HF_REPO_ID=yourname/bioforgenet-checkpoints`
+- `HF_REPO_TYPE=model` (or `dataset`)
+- `VERISIGHT_CHECKPOINT_DIR=/tmp/checkpoints`
+- `VERISIGHT_MAX_FOLDS=1` (start with 1, increase after memory testing)
+- `HF_ALLOW_PATTERNS=best_fold*.pth`
+- `HF_TOKEN=...` (only if checkpoint repo is private)
+
+### 4) Verify mode
+- Open `https://<your-space>.hf.space/model-status`
+- Expect: `"mode": "real-checkpoint"`
+
+### 5) Point frontend to Space API
+- Set `api-base` in `index.html` to your Space URL, for example:
+  `https://yourname-bioforgenet-api.hf.space`
+
+### Notes
+- On free resources, start with 1 fold and increase gradually.
+- If startup is slow, keep fallback mode available as backup.
+
 ---
 
 ## 🔌 API Reference

@@ -15,6 +15,15 @@ from typing import Optional
 app = FastAPI(title="BioForgeNet API", version="1.0.0")
 
 
+def _get_max_folds() -> int:
+    value = os.getenv("VERISIGHT_MAX_FOLDS", "5").strip()
+    try:
+        parsed = int(value)
+    except ValueError:
+        return 5
+    return max(1, parsed)
+
+
 def _cors_origins() -> list[str]:
     env_value = os.getenv("CORS_ORIGINS", "").strip()
     if env_value:
@@ -51,6 +60,38 @@ def _build_src_path() -> Path:
     return Path(__file__).resolve().parents[2] / "src"
 
 
+def _download_checkpoints_from_hf(target_dir: Path) -> bool:
+    repo_id = os.getenv("HF_REPO_ID", "").strip()
+    if not repo_id:
+        return False
+
+    try:
+        from huggingface_hub import snapshot_download
+    except Exception as exc:
+        print(f"HF download skipped: huggingface_hub not available ({exc})")
+        return False
+
+    repo_type = os.getenv("HF_REPO_TYPE", "model").strip() or "model"
+    token = os.getenv("HF_TOKEN", "").strip() or None
+    allow_patterns_raw = os.getenv("HF_ALLOW_PATTERNS", "best_fold*.pth")
+    allow_patterns = [p.strip() for p in allow_patterns_raw.split(",") if p.strip()]
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        snapshot_download(
+            repo_id=repo_id,
+            repo_type=repo_type,
+            token=token,
+            local_dir=str(target_dir),
+            local_dir_use_symlinks=False,
+            allow_patterns=allow_patterns,
+        )
+        return bool(list(target_dir.glob("best_fold*.pth")))
+    except Exception as exc:
+        print(f"HF checkpoint download failed: {exc}")
+        return False
+
+
 SRC_DIR = _build_src_path()
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -62,6 +103,8 @@ def _find_checkpoint_dir() -> Path | None:
     env_ckpt = os.getenv("VERISIGHT_CHECKPOINT_DIR")
     if env_ckpt:
         candidates.append(Path(env_ckpt))
+    else:
+        candidates.append(Path("/tmp/checkpoints"))
 
     candidates.extend(
         [
@@ -74,6 +117,11 @@ def _find_checkpoint_dir() -> Path | None:
     for ckpt_dir in candidates:
         if ckpt_dir.exists() and list(ckpt_dir.glob("best_fold*.pth")):
             return ckpt_dir
+
+    hf_target = candidates[0]
+    if _download_checkpoints_from_hf(hf_target):
+        return hf_target
+
     return None
 
 
@@ -121,6 +169,9 @@ class ModelService:
                 self.ready = True
                 return
 
+            max_folds = _get_max_folds()
+            fold_paths = fold_paths[:max_folds]
+
             engine = InferenceEngine(config=config, device=self.device)
             engine.load_models(fold_paths)
 
@@ -129,7 +180,7 @@ class ModelService:
             self._postprocess_mask = postprocess_mask
             self._val_aug_fn = get_validation_augmentation
             self.mode = "real-checkpoint"
-            self.reason = f"Loaded {len(fold_paths)} fold checkpoints from {ckpt_dir}"
+            self.reason = f"Loaded {len(fold_paths)} fold checkpoints from {ckpt_dir} (max={max_folds})"
             self.ready = True
 
         except Exception as exc:
@@ -241,7 +292,7 @@ def root():
         'name': 'BioForgeNet API',
         'status': 'live',
         'mode': MODEL_SERVICE.mode,
-        'endpoints': ['/health', '/model-status', '/analyze', '/analyze-mask', '/docs'],
+        'endpoints': ['/health', '/model-status', '/api/book-demo', '/analyze', '/analyze-mask', '/docs'],
     }
 
 
@@ -285,8 +336,8 @@ async def book_demo(request: BookDemoRequest):
     """
     Store demo request and send automatic notification email to admin.
     """
-    from models import DemoRequest, SessionLocal
-    from email_utils import send_demo_request_email
+    from api.models import DemoRequest, SessionLocal
+    from api.email_utils import send_demo_request_email
     
     db = SessionLocal()
     try:
@@ -342,6 +393,7 @@ async def book_demo(request: BookDemoRequest):
 
 
 # ======================== Image Analysis Endpoints ========================
+@app.post('/analyze')
 async def analyze(file: UploadFile = File(...)):
     content = await file.read()
     image_bgr = _decode_upload_to_bgr(content)
