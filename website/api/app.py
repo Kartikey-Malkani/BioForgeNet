@@ -232,6 +232,17 @@ def _decode_upload_to_bgr(content: bytes) -> np.ndarray | None:
     return cv2.imdecode(image_np, cv2.IMREAD_COLOR)
 
 
+@app.get('/')
+def root():
+    MODEL_SERVICE.initialize()
+    return {
+        'name': 'BioForgeNet API',
+        'status': 'live',
+        'mode': MODEL_SERVICE.mode,
+        'endpoints': ['/health', '/model-status', '/analyze', '/analyze-mask', '/docs'],
+    }
+
+
 @app.get('/health')
 def health():
     MODEL_SERVICE.initialize()
