@@ -14,7 +14,7 @@ services:
       - key: PYTHONIOENCODING
         value: utf-8
       - key: CORS_ORIGINS
-        value: https://bioforgenet.live,https://www.bioforgenet.live
+        value: https://bioforgenet.live,https://www.bioforgenet.live,https://bioforgenet-web.onrender.com
       # Optional: set this in Render dashboard when using real checkpoints
       # - key: VERISIGHT_CHECKPOINT_DIR
       #   value: /opt/render/project/src/outputs/checkpoints
@@ -22,6 +22,6 @@ services:
   - type: web
     name: bioforgenet-web
     runtime: static
-    rootDir: website
+    rootDir: .
     buildCommand: ""
-    staticPublishPath: .
+    staticPublishPath: website
