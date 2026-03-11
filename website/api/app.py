@@ -9,6 +9,8 @@ import cv2
 import base64
 import torch
 import io
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI(title="BioForgeNet API", version="1.0.0")
 
@@ -264,7 +266,82 @@ def model_status():
     }
 
 
-@app.post('/analyze')
+# ======================== Demo Request Endpoint ========================
+
+class BookDemoRequest(BaseModel):
+    company_name: str
+    first_name: str
+    last_name: str
+    email: str
+    phone: str
+    industry: str
+    company_size: str
+    use_case: Optional[str] = None
+    message: Optional[str] = None
+
+
+@app.post('/api/book-demo')
+async def book_demo(request: BookDemoRequest):
+    """
+    Store demo request and send automatic notification email to admin.
+    """
+    from models import DemoRequest, SessionLocal
+    from email_utils import send_demo_request_email
+    
+    db = SessionLocal()
+    try:
+        # Store in database
+        demo_req = DemoRequest(
+            company_name=request.company_name,
+            first_name=request.first_name,
+            last_name=request.last_name,
+            email=request.email,
+            phone=request.phone,
+            industry=request.industry,
+            company_size=request.company_size,
+            use_case=request.use_case,
+            message=request.message,
+        )
+        db.add(demo_req)
+        db.commit()
+        db.refresh(demo_req)
+        
+        # Send email notification
+        email_sent = send_demo_request_email(
+            company_name=request.company_name,
+            first_name=request.first_name,
+            last_name=request.last_name,
+            email=request.email,
+            phone=request.phone,
+            industry=request.industry,
+            company_size=request.company_size,
+            use_case=request.use_case,
+            message=request.message,
+        )
+        
+        # Update email_sent status
+        demo_req.email_sent = email_sent
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "Demo request received. We'll get back to you soon!",
+            "request_id": demo_req.id,
+            "email_sent": email_sent,
+        }
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Error processing demo request: {e}")
+        return {
+            "success": False,
+            "message": "Failed to process request. Please try again or email us directly.",
+            "error": str(e),
+        }
+    finally:
+        db.close()
+
+
+# ======================== Image Analysis Endpoints ========================
 async def analyze(file: UploadFile = File(...)):
     content = await file.read()
     image_bgr = _decode_upload_to_bgr(content)

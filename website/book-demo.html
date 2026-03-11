@@ -326,6 +326,26 @@
 
           <div class="form-row">
             <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required />
+            </div>
+            <div class="form-group">
+              <label for="industry">Industry *</label>
+              <select id="industry" name="industry" required>
+                <option value="">Select…</option>
+                <option>Pharmaceutical / Biotech</option>
+                <option>Academic / Research</option>
+                <option>Clinical Laboratory</option>
+                <option>Publishing / Journal</option>
+                <option>Contract Research Organization</option>
+                <option>Regulatory / Government</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
               <label for="company">Company / Institution *</label>
               <input type="text" id="company" name="company" placeholder="BioNovex Therapeutics" required />
             </div>
@@ -488,50 +508,54 @@
       btn.textContent = 'Sending…';
       btn.disabled = true;
 
+      // Get API base from meta tag or use production URL
+      const apiBase = document.querySelector('meta[name="api-base"]')?.content || 'https://bioforgenet-api.onrender.com';
+
       // Build payload
+      const additionalInfo = [
+        `Job Title: ${document.getElementById('jobTitle').value}`,
+        `Monthly Scans: ${document.getElementById('monthlyScans').value || 'Not specified'}`,
+        `Preferred Slot: ${selectedSlot || 'Not specified'}`,
+      ].filter(x => x).join('\n');
+
       const payload = {
-        firstName:    document.getElementById('firstName').value,
-        lastName:     document.getElementById('lastName').value,
-        email:        document.getElementById('workEmail').value,
-        company:      document.getElementById('company').value,
-        jobTitle:     document.getElementById('jobTitle').value,
-        teamSize:     document.getElementById('teamSize').value,
-        monthlyScans: document.getElementById('monthlyScans').value,
-        useCase:      document.getElementById('useCase').value,
-        preferredSlot: selectedSlot || 'Not specified',
-        message:      document.getElementById('message').value,
-        _subject:     'New BioForgeNet Demo Request — ' + document.getElementById('company').value,
-        _replyto:     document.getElementById('workEmail').value,
+        company_name: document.getElementById('company').value,
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        email: document.getElementById('workEmail').value,
+        phone: document.getElementById('phone').value,
+        industry: document.getElementById('industry').value,
+        company_size: document.getElementById('teamSize').value || 'Not specified',
+        use_case: document.getElementById('useCase').value,
+        message: [
+          additionalInfo,
+          document.getElementById('message').value,
+        ].filter(x => x).join('\n\n'),
       };
 
       try {
-        const res = await fetch('https://formspree.io/malkani.ai024@gmail.com', {
+        const res = await fetch(`${apiBase}/api/book-demo`, {
           method:  'POST',
-          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify(payload),
         });
 
-        if (res.ok || res.status === 200) {
+        const data = await res.json();
+
+        if (data.success || res.ok) {
           document.getElementById('demoForm').style.display = 'none';
           const s = document.getElementById('successState');
           s.style.display = 'block';
-          if (selectedSlot && !selectedSlot.includes('Flexible')) {
-            s.querySelector('p').textContent =
-              `We'll send a calendar invite for ${selectedSlot} to ${payload.email} within 2 business hours.`;
-          }
+          s.querySelector('p').textContent =
+            `Your demo request has been received! We'll send a calendar invite to ${payload.email} within 2 business hours.`;
         } else {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || `Status ${res.status}`);
+          throw new Error(data.message || `Status ${res.status}`);
         }
       } catch (err) {
+        console.error('Demo request error:', err);
         btn.disabled = false;
         btn.textContent = 'Request My Demo →';
-        // Fallback: open mail client if fetch fails (e.g. first-time Formspree verification pending)
-        const body = encodeURIComponent(
-          `Name: ${payload.firstName} ${payload.lastName}\nEmail: ${payload.email}\nCompany: ${payload.company}\nTitle: ${payload.jobTitle}\nUse Case: ${payload.useCase}\nPreferred Slot: ${payload.preferredSlot}\n\n${payload.message}`
-        );
-        const subject = encodeURIComponent(payload._subject);
-        window.location.href = `mailto:malkani.ai024@gmail.com?subject=${subject}&body=${body}`;
+        alert(`Error: ${err.message}\n\nPlease try again or email us at malkani.ai024@gmail.com`);
       }
     }
   </script>
