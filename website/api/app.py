@@ -61,7 +61,7 @@ def _build_src_path() -> Path:
 
 
 def _download_checkpoints_from_hf(target_dir: Path) -> bool:
-    repo_id = os.getenv("HF_REPO_ID", "").strip()
+    repo_id = os.getenv("HF_REPO_ID", "Ritambharam/bioforgenet-checkpoints").strip()
     if not repo_id:
         return False
 
@@ -71,7 +71,7 @@ def _download_checkpoints_from_hf(target_dir: Path) -> bool:
         print(f"HF download skipped: huggingface_hub not available ({exc})")
         return False
 
-    repo_type = os.getenv("HF_REPO_TYPE", "model").strip() or "model"
+    repo_type = os.getenv("HF_REPO_TYPE", "dataset").strip() or "dataset"
     token = os.getenv("HF_TOKEN", "").strip() or None
     allow_patterns_raw = os.getenv("HF_ALLOW_PATTERNS", "best_fold*.pth")
     allow_patterns = [p.strip() for p in allow_patterns_raw.split(",") if p.strip()]

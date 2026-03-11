@@ -101,20 +101,20 @@ Use this when Render free RAM is not enough for local checkpoint storage.
 ### 3) Space variables/secrets
 In Space **Settings → Variables and secrets**, set:
 - `CORS_ORIGINS=https://bioforgenet.live,https://www.bioforgenet.live`
-- `HF_REPO_ID=yourname/bioforgenet-checkpoints`
-- `HF_REPO_TYPE=model` (or `dataset`)
+- `HF_REPO_ID=Ritambharam/bioforgenet-checkpoints`
+- `HF_REPO_TYPE=dataset`
 - `VERISIGHT_CHECKPOINT_DIR=/tmp/checkpoints`
 - `VERISIGHT_MAX_FOLDS=1` (start with 1, increase after memory testing)
 - `HF_ALLOW_PATTERNS=best_fold*.pth`
 - `HF_TOKEN=...` (only if checkpoint repo is private)
 
 ### 4) Verify mode
-- Open `https://<your-space>.hf.space/model-status`
+- Open `https://ritambharam-bioforgenet-api.hf.space/model-status`
 - Expect: `"mode": "real-checkpoint"`
 
 ### 5) Point frontend to Space API
-- Set `api-base` in `index.html` to your Space URL, for example:
-  `https://yourname-bioforgenet-api.hf.space`
+- `index.html` is already set to:
+   `https://ritambharam-bioforgenet-api.hf.space`
 
 ### Notes
 - On free resources, start with 1 fold and increase gradually.
