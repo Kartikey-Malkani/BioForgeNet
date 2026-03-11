@@ -30,7 +30,7 @@ def send_demo_request_email(
     
     gmail_email = os.getenv("GMAIL_EMAIL", "").strip()
     gmail_password = os.getenv("GMAIL_APP_PASSWORD", "").strip()
-    recipient_email = os.getenv("ADMIN_EMAIL", "malkani.ai024@gmail.com").strip()
+    recipient_email = os.getenv("ADMIN_EMAIL", "kartikeymalkanitablet@gmail.com").strip()
     
     if not gmail_email or not gmail_password:
         print("⚠️  Warning: GMAIL_EMAIL or GMAIL_APP_PASSWORD not set in environment")
