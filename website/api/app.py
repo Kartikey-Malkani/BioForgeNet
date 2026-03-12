@@ -57,7 +57,17 @@ def _mask_to_base64_png(mask_u8: np.ndarray) -> str:
 
 
 def _build_src_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "src"
+    app_file = Path(__file__).resolve()
+    candidates = [
+        app_file.parents[1] / "src",  # /app/src (HF Space Docker layout)
+        app_file.parents[2] / "src",  # monorepo layout
+        Path("/app/src"),
+        Path("/src"),
+    ]
+    for candidate in candidates:
+        if candidate.exists() and (candidate / "config.py").exists():
+            return candidate
+    return candidates[0]
 
 
 def _download_checkpoints_from_hf(target_dir: Path) -> bool:
