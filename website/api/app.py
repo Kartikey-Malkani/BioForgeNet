@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import os
@@ -304,6 +304,11 @@ def root():
         'mode': MODEL_SERVICE.mode,
         'endpoints': ['/health', '/model-status', '/api/book-demo', '/analyze', '/analyze-mask', '/docs'],
     }
+
+
+@app.head('/')
+def root_head():
+    return Response(status_code=200)
 
 
 @app.get('/health')
