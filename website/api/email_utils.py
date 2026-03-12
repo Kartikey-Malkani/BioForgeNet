@@ -20,18 +20,29 @@ def _send_via_formspree(
     formspree_url = os.getenv("FORMSPREE_URL", "https://formspree.io/f/mojkwezo").strip()
     try:
         import httpx
+        summary = (
+            f"Company: {company_name}\n"
+            f"Contact: {first_name} {last_name}\n"
+            f"Email: {email}\n"
+            f"Phone: {phone}\n"
+            f"Industry: {industry}\n"
+            f"Company Size: {company_size}\n"
+            f"Use Case: {use_case or 'Not specified'}\n\n"
+            f"Message:\n{message or 'None'}\n\n"
+            f"Submitted: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        )
         payload = {
-            "firstName": first_name,
-            "lastName": last_name,
-            "email": email,
-            "company": company_name,
-            "phone": phone,
-            "industry": industry,
-            "teamSize": company_size,
-            "useCase": use_case or "",
-            "message": message or "",
+            "Company": company_name,
+            "Name": f"{first_name} {last_name}",
+            "Email": email,
+            "Phone": phone,
+            "Industry": industry,
+            "Company Size": company_size,
+            "Use Case": use_case or "Not specified",
+            "Message": message or "None",
             "_subject": f"New BioForgeNet Demo Request — {company_name}",
             "_replyto": email,
+            "message": summary,
         }
         resp = httpx.post(
             formspree_url,

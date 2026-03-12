@@ -536,18 +536,30 @@
       const fallbackEndpoint = 'https://formspree.io/f/mojkwezo';
 
       async function submitViaFormspree() {
+        const summary = [
+          `Company: ${payload.company_name}`,
+          `Name: ${payload.first_name} ${payload.last_name}`,
+          `Email: ${payload.email}`,
+          `Phone: ${payload.phone}`,
+          `Industry: ${payload.industry}`,
+          `Company Size: ${payload.company_size}`,
+          `Use Case: ${payload.use_case || 'Not specified'}`,
+          ``,
+          `Message:`,
+          payload.message || 'None',
+        ].join('\n');
         const formspreePayload = {
-          firstName: payload.first_name,
-          lastName: payload.last_name,
-          email: payload.email,
-          company: payload.company_name,
-          phone: payload.phone,
-          industry: payload.industry,
-          teamSize: payload.company_size,
-          useCase: payload.use_case,
-          message: payload.message,
+          'Company': payload.company_name,
+          'Name': `${payload.first_name} ${payload.last_name}`,
+          'Email': payload.email,
+          'Phone': payload.phone,
+          'Industry': payload.industry,
+          'Company Size': payload.company_size,
+          'Use Case': payload.use_case || 'Not specified',
+          'Message': payload.message || 'None',
           _subject: `New BioForgeNet Demo Request — ${payload.company_name}`,
           _replyto: payload.email,
+          message: summary,
         };
 
         const fallbackRes = await fetch(fallbackEndpoint, {
