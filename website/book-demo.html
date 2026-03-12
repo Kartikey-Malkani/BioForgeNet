@@ -533,6 +533,8 @@
         ].filter(x => x).join('\n\n'),
       };
 
+      const fallbackEndpoint = 'https://formspree.io/f/mblkrrdk';
+
       async function submitViaFormspree() {
         const formspreePayload = {
           firstName: payload.first_name,
@@ -548,7 +550,7 @@
           _replyto: payload.email,
         };
 
-        const fallbackRes = await fetch('https://formspree.io/f/mblkrrdk', {
+        const fallbackRes = await fetch(fallbackEndpoint, {
           method: 'POST',
           headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
           body: JSON.stringify(formspreePayload),
@@ -571,8 +573,14 @@
         const emailConfirmed = data.email_sent === true;
 
         if (apiAccepted) {
+          let fallbackSent = false;
           if (!emailConfirmed) {
-            await submitViaFormspree();
+            try {
+              await submitViaFormspree();
+              fallbackSent = true;
+            } catch (fallbackErr) {
+              console.error('Fallback submit error after accepted API request:', fallbackErr);
+            }
           }
 
           document.getElementById('demoForm').style.display = 'none';
@@ -580,7 +588,9 @@
           s.style.display = 'block';
           s.querySelector('p').textContent = emailConfirmed
             ? `Your demo request has been received! We'll send a calendar invite to ${payload.email} within 2 business hours.`
-            : `Your demo request has been received! Our team will contact you at ${payload.email} within 2 business hours.`;
+            : fallbackSent
+              ? `Your demo request has been received! Our team will contact you at ${payload.email} within 2 business hours.`
+              : `Your demo request has been received and saved, but email delivery is temporarily unavailable. Please also email us at kartikeymalkanitablet@gmail.com for fastest scheduling.`;
         } else {
           throw new Error(data.message || `Status ${res.status}`);
         }
