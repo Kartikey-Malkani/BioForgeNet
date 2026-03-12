@@ -27,12 +27,16 @@ def _get_max_folds() -> int:
 def _cors_origins() -> list[str]:
     env_value = os.getenv("CORS_ORIGINS", "").strip()
     if env_value:
-        return [origin.strip() for origin in env_value.split(",") if origin.strip()]
+        origins = [origin.strip() for origin in env_value.split(",") if origin.strip()]
+        if "https://bioforgenet.onrender.com" not in origins:
+            origins.append("https://bioforgenet.onrender.com")
+        return origins
     return [
         "http://localhost:5500",
         "http://127.0.0.1:5500",
         "https://bioforgenet.live",
         "https://www.bioforgenet.live",
+        "https://bioforgenet.onrender.com",
         "https://bioforgenet-web.onrender.com",
     ]
 
