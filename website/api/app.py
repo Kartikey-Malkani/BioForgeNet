@@ -360,28 +360,38 @@ async def book_demo(request: BookDemoRequest):
     """
     Store demo request and send automatic notification email to admin.
     """
-    from api.models import DemoRequest, SessionLocal
-    from api.email_utils import send_demo_request_email
-    
-    db = SessionLocal()
+    db = None
+    demo_req = None
+    storage_error = None
+    email_error = None
+    request_id = None
+
     try:
-        # Store in database
-        demo_req = DemoRequest(
-            company_name=request.company_name,
-            first_name=request.first_name,
-            last_name=request.last_name,
-            email=request.email,
-            phone=request.phone,
-            industry=request.industry,
-            company_size=request.company_size,
-            use_case=request.use_case,
-            message=request.message,
-        )
-        db.add(demo_req)
-        db.commit()
-        db.refresh(demo_req)
-        
-        # Send email notification
+        try:
+            from api.models import DemoRequest, SessionLocal
+
+            db = SessionLocal()
+            demo_req = DemoRequest(
+                company_name=request.company_name,
+                first_name=request.first_name,
+                last_name=request.last_name,
+                email=request.email,
+                phone=request.phone,
+                industry=request.industry,
+                company_size=request.company_size,
+                use_case=request.use_case,
+                message=request.message,
+            )
+            db.add(demo_req)
+            db.commit()
+            db.refresh(demo_req)
+            request_id = demo_req.id
+        except Exception as exc:
+            storage_error = str(exc)
+            if db is not None:
+                db.rollback()
+
+        from api.email_utils import send_demo_request_email
         email_sent = send_demo_request_email(
             company_name=request.company_name,
             first_name=request.first_name,
@@ -393,27 +403,40 @@ async def book_demo(request: BookDemoRequest):
             use_case=request.use_case,
             message=request.message,
         )
-        
-        # Update email_sent status
-        demo_req.email_sent = email_sent
-        db.commit()
-        
+
+        if demo_req is not None and db is not None:
+            try:
+                demo_req.email_sent = email_sent
+                db.commit()
+            except Exception as exc:
+                storage_error = str(exc)
+                db.rollback()
+
+        if storage_error and not email_sent:
+            return {
+                "success": False,
+                "message": "Failed to process request. Please try again or email us directly.",
+                "error": storage_error,
+            }
+
         return {
             "success": True,
             "message": "Demo request received. We'll get back to you soon!",
-            "request_id": demo_req.id,
+            "request_id": request_id,
             "email_sent": email_sent,
+            "storage_warning": storage_error,
         }
     except Exception as e:
-        db.rollback()
+        email_error = str(e)
         print(f"❌ Error processing demo request: {e}")
         return {
             "success": False,
             "message": "Failed to process request. Please try again or email us directly.",
-            "error": str(e),
+            "error": email_error,
         }
     finally:
-        db.close()
+        if db is not None:
+            db.close()
 
 
 # ======================== Image Analysis Endpoints ========================

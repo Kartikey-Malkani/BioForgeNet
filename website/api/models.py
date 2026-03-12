@@ -5,14 +5,36 @@ from datetime import datetime
 import os
 from pathlib import Path
 
-# Database URL
-DATABASE_DIR = Path(__file__).parent.parent.parent / "data"
-DATABASE_DIR.mkdir(exist_ok=True)
-DATABASE_URL = f"sqlite:///{DATABASE_DIR / 'demo_requests.db'}"
+def _resolve_database_url() -> str:
+    explicit_url = os.getenv("DEMO_DB_URL", "").strip()
+    if explicit_url:
+        return explicit_url
+
+    explicit_path = os.getenv("DEMO_DB_PATH", "").strip()
+    if explicit_path:
+        return f"sqlite:///{Path(explicit_path)}"
+
+    candidates = [
+        Path("/tmp/bioforgenet_data"),
+        Path(__file__).resolve().parents[2] / "data",
+        Path.cwd() / "data",
+    ]
+
+    for directory in candidates:
+        try:
+            directory.mkdir(parents=True, exist_ok=True)
+            return f"sqlite:///{directory / 'demo_requests.db'}"
+        except Exception:
+            continue
+
+    return "sqlite:///:memory:"
+
+
+DATABASE_URL = _resolve_database_url()
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -53,7 +75,10 @@ class DemoRequest(Base):
 
 
 # Create tables
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as exc:
+    print(f"⚠️ Demo DB table creation skipped: {exc}")
 
 
 def get_db():
