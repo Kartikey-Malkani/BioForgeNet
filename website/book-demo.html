@@ -533,6 +533,32 @@
         ].filter(x => x).join('\n\n'),
       };
 
+      async function submitViaFormspree() {
+        const formspreePayload = {
+          firstName: payload.first_name,
+          lastName: payload.last_name,
+          email: payload.email,
+          company: payload.company_name,
+          phone: payload.phone,
+          industry: payload.industry,
+          teamSize: payload.company_size,
+          useCase: payload.use_case,
+          message: payload.message,
+          _subject: `New BioForgeNet Demo Request — ${payload.company_name}`,
+          _replyto: payload.email,
+        };
+
+        const fallbackRes = await fetch('https://formspree.io/f/mblkrrdk', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify(formspreePayload),
+        });
+
+        if (!fallbackRes.ok) {
+          throw new Error(`Fallback submit failed (status ${fallbackRes.status})`);
+        }
+      }
+
       try {
         const res = await fetch(`${apiBase}/api/book-demo`, {
           method:  'POST',
@@ -540,7 +566,7 @@
           body:    JSON.stringify(payload),
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
 
         if (data.success || res.ok) {
           document.getElementById('demoForm').style.display = 'none';
@@ -552,10 +578,20 @@
           throw new Error(data.message || `Status ${res.status}`);
         }
       } catch (err) {
-        console.error('Demo request error:', err);
-        btn.disabled = false;
-        btn.textContent = 'Request My Demo →';
-        alert(`Error: ${err.message}\n\nPlease try again or email us at kartikeymalkanitablet@gmail.com`);
+        try {
+          await submitViaFormspree();
+          document.getElementById('demoForm').style.display = 'none';
+          const s = document.getElementById('successState');
+          s.style.display = 'block';
+          s.querySelector('p').textContent =
+            `Your demo request has been received! We'll send a calendar invite to ${payload.email} within 2 business hours.`;
+        } catch (fallbackErr) {
+          console.error('Demo request error:', err);
+          console.error('Fallback submit error:', fallbackErr);
+          btn.disabled = false;
+          btn.textContent = 'Request My Demo →';
+          alert(`Error: ${(fallbackErr && fallbackErr.message) || err.message}\n\nPlease try again or email us at kartikeymalkanitablet@gmail.com`);
+        }
       }
     }
   </script>
