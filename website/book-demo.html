@@ -567,8 +567,9 @@
         });
 
         const data = await res.json().catch(() => ({}));
+        const apiAccepted = data.success === true || (res.ok && typeof data.success === 'undefined');
 
-        if (data.success || res.ok) {
+        if (apiAccepted) {
           document.getElementById('demoForm').style.display = 'none';
           const s = document.getElementById('successState');
           s.style.display = 'block';

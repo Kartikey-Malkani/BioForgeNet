@@ -61,6 +61,9 @@ Additional Message:
 
 Submitted: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
 """
+
+  use_case_html = use_case if use_case else '<em style="color: #999;">Not specified</em>'
+  message_html = message if message else '<em style="color: #999;">No additional message</em>'
         
         # HTML version
         html_content = f"""
@@ -96,13 +99,13 @@ Submitted: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
       </tr>
       <tr style="background: #fff; border-bottom: 1px solid #e5e7eb;">
         <td style="padding: 12px; font-weight: 600; width: 120px;">Use Case:</td>
-        <td style="padding: 12px;">{use_case or '<em style=\"color: #999;\">Not specified</em>'}</td>
+        <td style="padding: 12px;">{use_case_html}</td>
       </tr>
       <tr style="background: #f9fafb;">
         <td colspan="2" style="padding: 12px; font-weight: 600;">Message:</td>
       </tr>
       <tr style="background: #fff;">
-        <td colspan="2" style="padding: 12px; border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 4px; white-space: pre-wrap;">{message or '<em style="color: #999;">No additional message</em>'}</td>
+        <td colspan="2" style="padding: 12px; border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 4px; white-space: pre-wrap;">{message_html}</td>
       </tr>
     </table>
     
