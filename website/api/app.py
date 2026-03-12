@@ -321,6 +321,11 @@ def health():
     }
 
 
+@app.head('/health')
+def health_head():
+    return Response(status_code=200)
+
+
 @app.get('/model-status')
 def model_status():
     MODEL_SERVICE.initialize()
