@@ -5,6 +5,52 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
+def _send_via_formspree(
+    company_name: str,
+    first_name: str,
+    last_name: str,
+    email: str,
+    phone: str,
+    industry: str,
+    company_size: str,
+    use_case: str = None,
+    message: str = None,
+) -> bool:
+    """HTTP fallback: POST form data to Formspree (works even when SMTP is blocked)."""
+    formspree_url = os.getenv("FORMSPREE_URL", "https://formspree.io/f/mojkwezo").strip()
+    try:
+        import httpx
+        payload = {
+            "firstName": first_name,
+            "lastName": last_name,
+            "email": email,
+            "company": company_name,
+            "phone": phone,
+            "industry": industry,
+            "teamSize": company_size,
+            "useCase": use_case or "",
+            "message": message or "",
+            "_subject": f"New BioForgeNet Demo Request — {company_name}",
+            "_replyto": email,
+        }
+        resp = httpx.post(
+            formspree_url,
+            json=payload,
+            headers={"Accept": "application/json"},
+            timeout=15,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get("ok"):
+                print(f"✅ Formspree fallback email sent for {email}")
+                return True
+        print(f"⚠️ Formspree fallback returned status {resp.status_code}: {resp.text}")
+        return False
+    except Exception as exc:
+        print(f"❌ Formspree fallback failed: {exc}")
+        return False
+
+
 def send_demo_request_email(
     company_name: str,
     first_name: str,
@@ -21,8 +67,11 @@ def send_demo_request_email(
     recipient_email = os.getenv("ADMIN_EMAIL", "kartikeymalkanitablet@gmail.com").strip()
 
     if not gmail_email or not gmail_password:
-        print("⚠️ Warning: GMAIL_EMAIL or GMAIL_APP_PASSWORD not set in environment")
-        return False
+        print("⚠️ Warning: GMAIL_EMAIL or GMAIL_APP_PASSWORD not set — trying Formspree fallback")
+        return _send_via_formspree(
+            company_name, first_name, last_name, email, phone,
+            industry, company_size, use_case, message,
+        )
 
     try:
         msg = MIMEMultipart("alternative")
@@ -113,5 +162,9 @@ Submitted: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
         print(f"✅ Email sent successfully to {recipient_email}")
         return True
     except Exception as exc:
-        print(f"❌ Failed to send email: {exc}")
-        return False
+        print(f"❌ Failed to send email via SMTP: {exc}")
+        print("🔄 Trying Formspree HTTP fallback...")
+        return _send_via_formspree(
+            company_name, first_name, last_name, email, phone,
+            industry, company_size, use_case, message,
+        )
