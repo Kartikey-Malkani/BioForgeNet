@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse
 import os
 import sys
 from pathlib import Path
+import threading
 import numpy as np
 import cv2
 import base64
@@ -147,60 +148,65 @@ class ModelService:
         self.engine = None
         self.config = None
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self._init_lock = threading.Lock()
 
     def initialize(self):
         if self.ready:
             return
 
-        try:
-            from config import Config
-            from inference import InferenceEngine
-            from augmentations import get_validation_augmentation
-            from postprocess import postprocess_mask
-
-            ckpt_dir = _find_checkpoint_dir()
-            if ckpt_dir is None:
-                self.mode = "proxy-fallback"
-                self.reason = "No best_fold checkpoints found"
-                self._postprocess_mask = postprocess_mask
-                self._val_aug_fn = get_validation_augmentation
-                self.ready = True
+        with self._init_lock:
+            if self.ready:
                 return
 
-            config = Config()
-            config.CHECKPOINT_DIR = ckpt_dir
-            config.THRESHOLD = float(getattr(config, "THRESHOLD", 0.5))
-            config.MIN_AREA = int(getattr(config, "MIN_AREA", 100))
-            config.USE_MORPHOLOGY = bool(getattr(config, "USE_MORPHOLOGY", False))
-            config.MORPH_KERNEL_SIZE = int(getattr(config, "MORPH_KERNEL_SIZE", 3))
+            try:
+                from config import Config
+                from inference import InferenceEngine
+                from augmentations import get_validation_augmentation
+                from postprocess import postprocess_mask
 
-            fold_paths = sorted(ckpt_dir.glob("best_fold*.pth"))
-            if not fold_paths:
-                self.mode = "proxy-fallback"
-                self.reason = f"Checkpoint dir exists but empty: {ckpt_dir}"
+                ckpt_dir = _find_checkpoint_dir()
+                if ckpt_dir is None:
+                    self.mode = "proxy-fallback"
+                    self.reason = "No best_fold checkpoints found"
+                    self._postprocess_mask = postprocess_mask
+                    self._val_aug_fn = get_validation_augmentation
+                    self.ready = True
+                    return
+
+                config = Config()
+                config.CHECKPOINT_DIR = ckpt_dir
+                config.THRESHOLD = float(getattr(config, "THRESHOLD", 0.5))
+                config.MIN_AREA = int(getattr(config, "MIN_AREA", 100))
+                config.USE_MORPHOLOGY = bool(getattr(config, "USE_MORPHOLOGY", False))
+                config.MORPH_KERNEL_SIZE = int(getattr(config, "MORPH_KERNEL_SIZE", 3))
+
+                fold_paths = sorted(ckpt_dir.glob("best_fold*.pth"))
+                if not fold_paths:
+                    self.mode = "proxy-fallback"
+                    self.reason = f"Checkpoint dir exists but empty: {ckpt_dir}"
+                    self._postprocess_mask = postprocess_mask
+                    self._val_aug_fn = get_validation_augmentation
+                    self.ready = True
+                    return
+
+                max_folds = _get_max_folds()
+                fold_paths = fold_paths[:max_folds]
+
+                engine = InferenceEngine(config=config, device=self.device)
+                engine.load_models(fold_paths)
+
+                self.engine = engine
+                self.config = config
                 self._postprocess_mask = postprocess_mask
                 self._val_aug_fn = get_validation_augmentation
+                self.mode = "real-checkpoint"
+                self.reason = f"Loaded {len(fold_paths)} fold checkpoints from {ckpt_dir} (max={max_folds})"
                 self.ready = True
-                return
 
-            max_folds = _get_max_folds()
-            fold_paths = fold_paths[:max_folds]
-
-            engine = InferenceEngine(config=config, device=self.device)
-            engine.load_models(fold_paths)
-
-            self.engine = engine
-            self.config = config
-            self._postprocess_mask = postprocess_mask
-            self._val_aug_fn = get_validation_augmentation
-            self.mode = "real-checkpoint"
-            self.reason = f"Loaded {len(fold_paths)} fold checkpoints from {ckpt_dir} (max={max_folds})"
-            self.ready = True
-
-        except Exception as exc:
-            self.mode = "proxy-fallback"
-            self.reason = f"Initialization error: {exc}"
-            self.ready = True
+            except Exception as exc:
+                self.mode = "proxy-fallback"
+                self.reason = f"Initialization error: {exc}"
+                self.ready = True
 
     def infer_with_mask(self, image_bgr: np.ndarray) -> tuple[dict, np.ndarray]:
         if not self.ready:
