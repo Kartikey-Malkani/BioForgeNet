@@ -568,13 +568,19 @@
 
         const data = await res.json().catch(() => ({}));
         const apiAccepted = data.success === true || (res.ok && typeof data.success === 'undefined');
+        const emailConfirmed = data.email_sent === true;
 
         if (apiAccepted) {
+          if (!emailConfirmed) {
+            await submitViaFormspree();
+          }
+
           document.getElementById('demoForm').style.display = 'none';
           const s = document.getElementById('successState');
           s.style.display = 'block';
-          s.querySelector('p').textContent =
-            `Your demo request has been received! We'll send a calendar invite to ${payload.email} within 2 business hours.`;
+          s.querySelector('p').textContent = emailConfirmed
+            ? `Your demo request has been received! We'll send a calendar invite to ${payload.email} within 2 business hours.`
+            : `Your demo request has been received! Our team will contact you at ${payload.email} within 2 business hours.`;
         } else {
           throw new Error(data.message || `Status ${res.status}`);
         }
