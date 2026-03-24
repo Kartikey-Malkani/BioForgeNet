@@ -78,10 +78,8 @@ This section is designed for product showcase visuals with concise captions.
 **Caption:** Model output with prediction, risk score, confidence, tampered-area metrics, and visual mask output.
 ![Analysis Result View](docs/screenshots/03-analysis-result.png)
 
-### 4) Forensic Mask Visualization
-**Caption:** Evidence-style forgery region visualization for audit, review, and reporting workflows.
-
-![Forensic Mask Visualization](docs/screenshots/04-mask-visualization.png)
+### 4) API Pricing
+![Pricing](docs/screenshots/04-mask-visualization.png)
 
 ### 5) Book Demo / Lead Capture
 **Caption:** Conversion-focused demo booking workflow with resilient delivery path and production fallback handling.
