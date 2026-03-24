@@ -2,6 +2,11 @@
 
 Scientific image-forgery detection platform with production API serving, segmentation masks, and enterprise-grade fallback architecture.
 
+[![Visit Website](https://img.shields.io/badge/Visit-bioforgenet.live-1f6feb?style=for-the-badge)](https://bioforgenet.live/)
+[![Status](https://img.shields.io/badge/Status-Live%20Deployment-2ea043?style=for-the-badge)](https://bioforgenet.live/)
+[![License](https://img.shields.io/badge/License-Proprietary-f85149?style=for-the-badge)](LICENSE)
+[![Contributing](https://img.shields.io/badge/Contributing-Guidelines-7c3aed?style=for-the-badge)](CONTRIBUTING.md)
+
 ## What this project does
 
 BioForgeNet detects and localizes tampered regions in biomedical images.
@@ -55,13 +60,31 @@ Research integrity teams and quality operations need fast, repeatable forensic s
 - Added startup race-condition protection in model initialization
 - Replaced SMTP dependency with Formspree HTTP flow to bypass blocked outbound SMTP
 
-## Screenshots
+## Product Screenshots
 
-### Forensic output example
+This section is designed for product showcase visuals with concise captions.
 
-![Forensic Mask Output](docs/screenshots/forensic-mask-example.png)
+> Screenshot source folder: `product_ss/`
 
-> Add additional UI screenshots (home, upload panel, results view, booking flow) to `docs/screenshots/` and link them here.
+### 1) Landing Page / Hero
+**Caption:** Premium product landing experience with live model status, product narrative, and enterprise positioning.
+
+`Add image in product_ss and replace this placeholder.`
+
+### 2) Demo Upload Flow
+**Caption:** Drag-and-drop image upload with guided user actions and one-click forgery analysis.
+
+`Add image in product_ss and replace this placeholder.`
+
+### 3) Analysis Result View
+**Caption:** Model output with prediction, risk score, confidence, tampered-area metrics, and visual mask output.
+
+`Add image in product_ss and replace this placeholder.`
+
+### 4) Book Demo / Lead Capture
+**Caption:** Conversion-focused demo booking workflow with resilient delivery path and production fallback handling.
+
+`Add image in product_ss and replace this placeholder.`
 
 ## Tech stack
 
@@ -84,6 +107,14 @@ QUICKSTART.md           # Local run guidance
 ## Code access policy
 
 Please read [CODE_ACCESS_POLICY.md](CODE_ACCESS_POLICY.md) before reuse, redistribution, or production adaptation.
+
+## Contributing
+
+Contribution process and repo workflow are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+This repository is governed by [LICENSE](LICENSE).
 
 ## Notes for recruiters / reviewers
 
