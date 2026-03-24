@@ -68,23 +68,30 @@ This section is designed for product showcase visuals with concise captions.
 
 ### 1) Landing Page / Hero
 **Caption:** Premium product landing experience with live model status, product narrative, and enterprise positioning.
-
-`Add image in product_ss and replace this placeholder.`
+![Landing Page Hero](docs/screenshots/01-landing-hero.png)
 
 ### 2) Demo Upload Flow
 **Caption:** Drag-and-drop image upload with guided user actions and one-click forgery analysis.
-
-`Add image in product_ss and replace this placeholder.`
+![Demo Upload Flow](docs/screenshots/02-upload-panel.png)
 
 ### 3) Analysis Result View
 **Caption:** Model output with prediction, risk score, confidence, tampered-area metrics, and visual mask output.
+![Analysis Result View](docs/screenshots/03-analysis-result.png)
 
-`Add image in product_ss and replace this placeholder.`
+### 4) Forensic Mask Visualization
+**Caption:** Evidence-style forgery region visualization for audit, review, and reporting workflows.
 
-### 4) Book Demo / Lead Capture
+![Forensic Mask Visualization](docs/screenshots/04-mask-visualization.png)
+
+### 5) Book Demo / Lead Capture
 **Caption:** Conversion-focused demo booking workflow with resilient delivery path and production fallback handling.
 
-`Add image in product_ss and replace this placeholder.`
+![Book Demo Form](docs/screenshots/05-book-demo-form.png)
+
+### 6) Booking Confirmation
+**Caption:** User confirmation state after successful booking request capture.
+
+![Booking Success](docs/screenshots/06-booking-success.png)
 
 ## Tech stack
 
