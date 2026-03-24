@@ -89,7 +89,7 @@ This section is designed for product showcase visuals with concise captions.
 ### 6) Booking Confirmation
 **Caption:** User confirmation state after successful booking request capture.
 
-![Booking Success](docs/screenshots/06-booking-success.png)
+![Booking Success](docs/screenshots/07-demo-confirmation.png)
 
 ## Tech stack
 
